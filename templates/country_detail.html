@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>{{ country.name_official }} {{ country.flag_emoji }}</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Common Name:</strong> {{ country.name_common }}</p>
+                <p><strong>Code:</strong> {{ country.cca2 }}</p>
+                <p><strong>Region:</strong> {{ country.region }}</p>
+                <p><strong>Subregion:</strong> {{ country.subregion|default:"N/A" }}</p>
+                <p><strong>Population:</strong> {{ country.population|intcomma }}</p>
+                <p><strong>Capital:</strong> {{ country.get_capital_string }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Timezones:</strong></p>
+                <ul>
+                    {% for timezone in country.timezones %}
+                        <li>{{ timezone }}</li>
+                    {% endfor %}
+                </ul>
+                
+                <p><strong>Languages:</strong></p>
+                <ul>
+                    {% for language in country.get_languages_list %}
+                        <li>{{ language }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <h3 class="mt-4">Countries in the same region:</h3>
+        <div class="row">
+            {% for regional_country in same_region_countries %}
+                {% if regional_country.id != country.id %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {{ regional_country.flag_emoji }} {{ regional_country.name_common }}
+                                </h5>
+                                <a href="{% url 'country_detail' regional_country.id %}" class="btn btn-sm btn-info">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'country_list' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+{% endblock %}
